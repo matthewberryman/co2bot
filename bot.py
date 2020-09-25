@@ -57,12 +57,20 @@ def check_mentions(api, since_id):
       year = int(search_object.group(0))
 
       logger.info(f"Answering to {tweet.user.name} for year {year}")
-      api.update_status(
-        status="Global % of human CO2 emitted since that year = "+str(round(world.loc[world['year']==year]['percent_after'].values[0],2))+"%\n" + \
-        "CO2 concentration that year = "+ str(ppm.loc[ppm['year']==1979]['ppm'].values[0]) +"ppm",
-        in_reply_to_status_id=tweet.id,
-        auto_populate_reply_metadata=True
-      )
+
+      if year > 2018 or year < 1751:
+        api.update_status(
+          status="Sorry, data only goes from 1751 up to 2018",
+          in_reply_to_status_id=tweet.id,
+          auto_populate_reply_metadata=True
+        )
+      else:
+        api.update_status(
+          status="Global % of human CO2 emitted since " + str(year) + " = "+str(round(world.loc[world['year']==year]['percent_after'].values[0],2))+"%\n" + \
+          "CO2 concentration that year = "+ str(ppm.loc[ppm['year']==1979]['ppm'].values[0]) +"ppm",
+          in_reply_to_status_id=tweet.id,
+          auto_populate_reply_metadata=True
+        )
   return new_since_id
 
 def main():
