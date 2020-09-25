@@ -75,7 +75,7 @@ def check_mentions(api, since_id):
             co2_conc = "(data not available for that year)"
           api.update_status(
             status="Global % of human CO2 emitted from " + str(year) + " to 2018 = "+str(round(world.loc[world['year']==year]['percent_after'].values[0],2))+"%\n" + \
-            "CO2 concentration that year = "+ co2_conc +"ppm",
+            "CO2 concentration that year = "+ co2_conc +" ppm",
             in_reply_to_status_id=tweet.id,
             auto_populate_reply_metadata=True
           )
