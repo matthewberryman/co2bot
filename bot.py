@@ -48,7 +48,9 @@ logger = logging.getLogger()
 def check_mentions(api, since_id):
   logger.info("Retrieving mentions")
   new_since_id = since_id
+  print(since_id)
   for tweet in tweepy.Cursor(api.mentions_timeline,since_id=since_id).items():
+    print(tweet.id)
     new_since_id = max(tweet.id, new_since_id)
     if tweet.in_reply_to_status_id is not None:
       continue
@@ -58,16 +60,16 @@ def check_mentions(api, since_id):
 
       logger.info(f"Answering to {tweet.user.name} for year {year}")
 
-      if year > 2018 or year < 1751:
+      if year >= 2018 or year < 1751:
         api.update_status(
-          status="Sorry, data only goes from 1751 up to 2018",
+          status="Please enter a year from 1751 up to 2017. " + str(round(time.time(),0)),
           in_reply_to_status_id=tweet.id,
           auto_populate_reply_metadata=True
         )
       else:
         api.update_status(
-          status="Global % of human CO2 emitted since " + str(year) + " = "+str(round(world.loc[world['year']==year]['percent_after'].values[0],2))+"%\n" + \
-          "CO2 concentration that year = "+ str(ppm.loc[ppm['year']==1979]['ppm'].values[0]) +"ppm",
+          status="Global % of human CO2 emitted from " + str(year) + " to 2018 = "+str(round(world.loc[world['year']==year]['percent_after'].values[0],2))+"%\n" + \
+          "CO2 concentration that year = "+ str(ppm.loc[ppm['year']==year]['ppm'].values[0]) +"ppm",
           in_reply_to_status_id=tweet.id,
           auto_populate_reply_metadata=True
         )
@@ -76,7 +78,7 @@ def check_mentions(api, since_id):
 def main():
   api = create_api()
 
-  #since_id=1
+  since_id=1
   with open('since_id', 'rb') as f:
     since_id = int(pickle.load(f))
     f.close()
